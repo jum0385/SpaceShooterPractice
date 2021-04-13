@@ -15,11 +15,13 @@ public class PlayerCtrl : MonoBehaviour
     private Transform tr;
     private Animation anim;
 
-    void Start()
+    IEnumerator Start()
     {
         tr = GetComponent<Transform>();
         anim = GetComponent<Animation>();
         anim.Play("Idle");
+
+        yield return new WaitForSeconds(0.3f);
     }
 
     // 델타타임 : Time.deltaTime
