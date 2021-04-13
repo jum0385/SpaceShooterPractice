@@ -8,6 +8,7 @@ public class FireCtrl : MonoBehaviour
 {
     public Transform firePos;
     public GameObject bulletPrefab;
+    public MeshRenderer muzzleFlash;
 
     // [System.NonSerialized]
     [HideInInspector]   // 인스펙터에서 숨김처리
@@ -17,6 +18,8 @@ public class FireCtrl : MonoBehaviour
     void Start()
     {
         audio = GetComponent<AudioSource>();
+        muzzleFlash = firePos.GetComponentInChildren<MeshRenderer>();
+        muzzleFlash.enabled = false;
     }
 
     void Update()
@@ -39,5 +42,22 @@ public class FireCtrl : MonoBehaviour
             audio.Play();
         */
         audio.PlayOneShot(fireSfx, 0.8f);   // 시스템 볼륨의 80%로 재생 // 사운드 중첩 가능
+
+        StartCoroutine(ShowMuzzleFlash());
+    }
+
+    IEnumerator ShowMuzzleFlash()
+    {
+        Vector2 offset = new Vector2(Random.Range(0,2), Random.Range(0,2)) * 0.5f;
+        muzzleFlash.material.mainTextureOffset = offset;
+
+        Quaternion rot = Quaternion.Euler(Vector3.forward * Random.Range(0, 360));
+        muzzleFlash.transform.localRotation = rot;
+
+        muzzleFlash.transform.localScale = Vector3.one * Random.Range(1.0f, 3.0f);
+
+        muzzleFlash.enabled = true;
+        yield return new WaitForSeconds(0.2f);
+        muzzleFlash.enabled = false;
     }
 }
