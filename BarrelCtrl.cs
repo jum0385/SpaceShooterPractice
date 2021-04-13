@@ -5,6 +5,7 @@ using UnityEngine;
 public class BarrelCtrl : MonoBehaviour
 {
     public GameObject expEffect;
+    public Texture[] textures;
 
     /*
         C# Standard Naming Rule
@@ -19,6 +20,15 @@ public class BarrelCtrl : MonoBehaviour
     */
     
     private int hitCount = 0;
+    private new MeshRenderer renderer;
+
+    void Start()
+    {
+        renderer = GetComponentInChildren<MeshRenderer>();
+
+        int idx = Random.Range(0, textures.Length);
+        renderer.material.mainTexture = textures[idx];
+    }
 
     // 충돌 콜백함수 (충돌시 1번 호출)
     void OnCollisionEnter(Collision coll)
