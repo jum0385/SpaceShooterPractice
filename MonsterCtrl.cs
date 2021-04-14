@@ -34,6 +34,8 @@ public class MonsterCtrl : MonoBehaviour
     private readonly int hashHit = Animator.StringToHash("Hit");
     private readonly int hashDie = Animator.StringToHash("Die");
 
+    private float hp = 100.0f;
+
     void Start()
     {
         monsterTr = GetComponent<Transform>();
@@ -82,11 +84,11 @@ public class MonsterCtrl : MonoBehaviour
     // 몬스터의 상태값에 따라서 행동을 처리하는 코루틴
     IEnumerator MonsterAction()
     {
-        while(!isDie)
+        while (!isDie)
         {
-            switch(state)
+            switch (state)
             {
-                case STATE.IDLE: 
+                case STATE.IDLE:
                     agent.isStopped = true;
                     anim.SetBool(hashTrace, false);
                     break;
@@ -100,6 +102,7 @@ public class MonsterCtrl : MonoBehaviour
                     anim.SetBool(hashAttack, true);
                     break;
                 case STATE.DIE:
+                    GetComponent<CapsuleCollider>().enabled = false;
                     agent.isStopped = true;
                     anim.SetTrigger(hashDie);
                     isDie = true;
@@ -109,4 +112,26 @@ public class MonsterCtrl : MonoBehaviour
         }
     }
 
+    void OnCollisionEnter(Collision coll)
+    {
+        if(coll.collider.CompareTag("BULLET"))
+        {
+            // Hit reaction 애니메이션 실행
+            anim.SetTrigger(hashHit);
+
+            // Bullet 삭제
+            Destroy(coll.gameObject);
+
+            // 몬스터의 HP 차감
+            hp -= 20.0f;
+            if (hp <= 0.0f)
+            {
+                state = STATE.DIE;
+            }
+        }
+    }
+
 }
+
+// A*PathFinding 길찾기 알고리즘
+// 네비게이션 시스템 (NavMesh) :    이동할 수 있는 영역과 이동할 수 없는 영역으로 데이터를  bake해야함.
