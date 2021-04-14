@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MonsterCtrl : MonoBehaviour
 {
     // 몬스터와 주인공의 Transform 컴포넌트를 저장할 변수 선언
     private Transform monsterTr;
     private Transform playerTr;
+    // 네비메시 에이전트 컴포넌트
+    private NavMeshAgent agent;
 
     // 몬스터의 상태를 나타내는 열거형 변수 정의
     public enum STATE { IDLE, TRACE, ATTACK, DIE };
@@ -37,6 +40,7 @@ public class MonsterCtrl : MonoBehaviour
         playerTr = GameObject.FindGameObjectWithTag("PLAYER")?.GetComponent<Transform>();
 
         anim = GetComponent<Animator>();
+        agent = GetComponent<NavMeshAgent>();
 
         StartCoroutine(CheckState());
         StartCoroutine(MonsterAction());
@@ -83,9 +87,12 @@ public class MonsterCtrl : MonoBehaviour
             switch(state)
             {
                 case STATE.IDLE: 
+                    agent.isStopped = true;
                     anim.SetBool(hashTrace, false);
                     break;
                 case STATE.TRACE:
+                    agent.SetDestination(playerTr.position);
+                    agent.isStopped = false;
                     anim.SetBool(hashTrace, true);
                     anim.SetBool(hashAttack, false);
                     break;
@@ -93,6 +100,7 @@ public class MonsterCtrl : MonoBehaviour
                     anim.SetBool(hashAttack, true);
                     break;
                 case STATE.DIE:
+                    agent.isStopped = true;
                     anim.SetTrigger(hashDie);
                     isDie = true;
                     break;
