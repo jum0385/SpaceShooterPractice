@@ -7,6 +7,10 @@ public class BarrelCtrl : MonoBehaviour
     public GameObject expEffect;
     public Texture[] textures;
 
+    [HideInInspector]
+    public new AudioSource audio;
+    public AudioClip expSFX;
+
     /*
         C# Standard Naming Rule
 
@@ -25,6 +29,7 @@ public class BarrelCtrl : MonoBehaviour
     void Start()
     {
         renderer = GetComponentInChildren<MeshRenderer>();
+        audio = GetComponent<AudioSource>();
 
         int idx = Random.Range(0, textures.Length);
         renderer.material.mainTexture = textures[idx];
@@ -46,6 +51,7 @@ public class BarrelCtrl : MonoBehaviour
 
     void ExpBarrel()
     {
+        audio.PlayOneShot(expSFX, 1.0f);
         Rigidbody rb = this.gameObject.AddComponent<Rigidbody>();
         rb.AddForce(Vector3.up * 2000.0f);
         Destroy(this.gameObject, 2.0f);
