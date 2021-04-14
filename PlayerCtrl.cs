@@ -17,11 +17,14 @@ public class PlayerCtrl : MonoBehaviour
 
     IEnumerator Start()
     {
+        turnSpeed = 0.0f;
+
         tr = GetComponent<Transform>();
         anim = GetComponent<Animation>();
         anim.Play("Idle");
 
         yield return new WaitForSeconds(0.3f);
+        turnSpeed = 200.0f;
     }
 
     // 델타타임 : Time.deltaTime
