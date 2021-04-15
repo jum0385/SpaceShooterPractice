@@ -15,6 +15,9 @@ public class PlayerCtrl : MonoBehaviour
     private Transform tr;
     private Animation anim;
 
+    public float initHp = 100.0f;
+    public float currHp = 100.0f;
+
     IEnumerator Start()
     {
         turnSpeed = 0.0f;
@@ -35,7 +38,7 @@ public class PlayerCtrl : MonoBehaviour
         r = Input.GetAxis("Mouse X");
 
         Vector3 moveDir = (Vector3.forward * v) + (Vector3.right * h);
-        tr.Translate(moveDir.normalized * Time.deltaTime * moveSpeed , Space.Self);
+        tr.Translate(moveDir.normalized * Time.deltaTime * moveSpeed, Space.Self);
         tr.Rotate(Vector3.up * Time.deltaTime * turnSpeed * r);
 
         PlayerAnimation();
@@ -64,4 +67,29 @@ public class PlayerCtrl : MonoBehaviour
             anim.CrossFade("Idle", 0.1f);
         }
     }
+
+    private void OnTriggerEnter(Collider coll)
+    {
+        if (coll.CompareTag("PUNCH"))
+        {
+            currHp -= 50.0f;
+
+            if (currHp < 0.0f)
+            {
+                PlayerDie();
+            }
+        }
+        
+    }
+
+    void PlayerDie()
+    {
+        GameObject[] monsters = GameObject.FindGameObjectsWithTag("MONSTER");
+
+        foreach(GameObject monster in monsters)
+        {
+            monster.SendMessage("YouWin", SendMessageOptions.DontRequireReceiver);
+        }
+    }
+
 }

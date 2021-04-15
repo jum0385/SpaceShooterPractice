@@ -131,6 +131,12 @@ public class MonsterCtrl : MonoBehaviour
         }
     }
 
+    void YouWin()
+    {
+        StopAllCoroutines();
+        anim.SetTrigger("PlayerDie");
+    }
+
 }
 
 // A*PathFinding 길찾기 알고리즘
